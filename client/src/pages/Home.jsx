@@ -28,7 +28,9 @@ const categories = [
 export default function Home() {
   const { user } = useAuth()
   const navigate = useNavigate()
-  const { items, loading, error } = useListings(new URLSearchParams('limit=8&sort=newest'))
+  const { items, loading, error, demoMode } = useListings(
+    new URLSearchParams('limit=8&sort=newest'),
+  )
   const [savedItems, setSavedItems] = useState(new Set())
 
   useEffect(() => {
@@ -176,35 +178,44 @@ export default function Home() {
             <Loading label="Finding the good stuff..." />
           ) : error ? (
             <div className="notice notice-error">{error}</div>
-          ) : items.length ? (
-            <div className="listing-grid">
-              {items.map((item) => (
-                <ListingCard
-                  key={item._id}
-                  item={item}
-                  saved={savedItems.has(item._id)}
-                  onSavedChange={(id, value) =>
-                    setSavedItems((current) => {
-                      const next = new Set(current)
-                      if (value) next.add(id)
-                      else next.delete(id)
-                      return next
-                    })
-                  }
-                />
-              ))}
-            </div>
           ) : (
-            <div className="empty-state">
-              <span className="empty-icon">
-                <Sparkles size={24} />
-              </span>
-              <h3>First dibs are still up for grabs.</h3>
-              <p>Be the first to add something lovely to the marketplace.</p>
-              <Link className="button button-primary" to="/sell">
-                List your first find <ArrowRight size={16} />
-              </Link>
-            </div>
+            <>
+              {demoMode && (
+                <div className="notice">
+                  Showing sample finds while the marketplace service reconnects.
+                </div>
+              )}
+              {items.length ? (
+                <div className="listing-grid">
+                  {items.map((item) => (
+                    <ListingCard
+                      key={item._id}
+                      item={item}
+                      saved={savedItems.has(item._id)}
+                      onSavedChange={(id, value) =>
+                        setSavedItems((current) => {
+                          const next = new Set(current)
+                          if (value) next.add(id)
+                          else next.delete(id)
+                          return next
+                        })
+                      }
+                    />
+                  ))}
+                </div>
+              ) : (
+                <div className="empty-state">
+                  <span className="empty-icon">
+                    <Sparkles size={24} />
+                  </span>
+                  <h3>First dibs are still up for grabs.</h3>
+                  <p>Be the first to add something lovely to the marketplace.</p>
+                  <Link className="button button-primary" to="/sell">
+                    List your first find <ArrowRight size={16} />
+                  </Link>
+                </div>
+              )}
+            </>
           )}
         </div>
       </section>

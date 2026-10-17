@@ -2,7 +2,7 @@ import { randomBytes } from 'node:crypto'
 import { config } from './config.js'
 import { User } from './models/User.js'
 import { Listing } from './models/Listing.js'
-import { examples } from './seed-data.js'
+import { examples } from '../../shared/seed-data.mjs'
 
 export async function seedDemoData() {
   if (process.env.SEED_DEMO_DATA !== 'true') {

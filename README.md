@@ -43,9 +43,12 @@ npm run seed -w server
 
 The seed command adds 56 listings (8 in each marketplace category). Each listing
 includes a description, price, condition, location, and Unsplash image. Seeding
-is idempotent, and refuses production unless `ALLOW_DEMO_SEED=true` is explicitly
-provided. It creates an unloginable fixture seller and does not set a default
-user password.
+is idempotent. It creates an unloginable fixture seller and does not set a
+default user password. Docker Compose seeds automatically. The Render Blueprint
+also explicitly enables seeding for its configured production MongoDB; remove
+`SEED_DEMO_DATA` and `ALLOW_DEMO_SEED` there to disable public demo listings.
+The client also falls back to this same catalog for browsing if the API is
+unavailable. Demo listings are browse-only until the API is restored.
 
 ## Environment
 
@@ -166,7 +169,9 @@ well, run `docker compose down --volumes`; this permanently removes the
    origin (`https://refind-olx.netlify.app` in the checked-in Blueprint).
    Ensure `NODE_ENV=production`. Generate a new, unique `JWT_SECRET` in Render
    (at least 32 random characters); never reuse or upload the local `.env`
-   secret. Redeploy after changing environment values.
+   secret. The Blueprint enables idempotent demo seeding with
+   `SEED_DEMO_DATA=true` and `ALLOW_DEMO_SEED=true`; after the first successful
+   API startup, verify there are 8 listings in each of the 7 categories.
 4. In Netlify, choose **Add new site → Import an existing project** and connect
    the repository. Keep the base directory at the repository root. The checked-in
    `netlify.toml` configures the build command and `client/dist` publish folder.

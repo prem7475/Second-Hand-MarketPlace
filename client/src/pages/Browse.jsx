@@ -21,7 +21,7 @@ const conditions = ['Like new', 'Excellent', 'Good', 'Fair']
 export default function Browse() {
   const { user } = useAuth()
   const [searchParams, setSearchParams] = useSearchParams()
-  const { items, pagination, loading, error } = useListings(searchParams)
+  const { items, pagination, loading, error, demoMode } = useListings(searchParams)
   const [saved, setSaved] = useState(new Set())
   const [query, setQuery] = useState(searchParams.get('q') || '')
 
@@ -199,6 +199,11 @@ export default function Browse() {
               <SlidersHorizontal size={16} /> Filters
             </button>
           </div>
+          {demoMode && (
+            <div className="notice">
+              Showing sample finds while the marketplace service reconnects.
+            </div>
+          )}
           {loading ? (
             <Loading label="Finding your next favorite..." />
           ) : error ? (

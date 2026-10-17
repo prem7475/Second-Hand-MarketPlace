@@ -1,6 +1,6 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { examples } from './seed-data.js'
+import { examples } from '../../shared/seed-data.mjs'
 import { listingSchema, validate } from './lib/validation.js'
 
 const categories = [

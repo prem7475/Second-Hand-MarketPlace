@@ -5,6 +5,7 @@ COPY client/package.json ./client/package.json
 COPY server/package.json ./server/package.json
 RUN npm ci
 COPY client ./client
+COPY shared ./shared
 RUN npm run build -w client
 
 FROM nginx:1.27-alpine

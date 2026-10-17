@@ -47,7 +47,7 @@ export default function ListingCard({ item, saved = false, onSavedChange }) {
       <Link className="listing-image-wrap" to={`/listing/${item._id}`}>
         <img src={listingImage(item)} alt={item.title} loading="lazy" />
         <span className="condition-tag">{item.condition}</span>
-        {user && (
+        {user && !item.isDemo && (
           <button
             className={`save-button ${saved ? 'is-saved' : ''}`}
             onClick={toggleSaved}

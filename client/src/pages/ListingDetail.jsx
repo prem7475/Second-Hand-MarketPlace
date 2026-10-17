@@ -6,6 +6,7 @@ import { formatPrice, timeAgo } from '../lib/format.js'
 import { listingImage } from '../components/ListingCard.jsx'
 import Loading from '../components/Loading.jsx'
 import { useAuth } from '../context/AuthContext.jsx'
+import { findDemoListing } from '../lib/demoListings.js'
 
 export default function ListingDetail() {
   const { id } = useParams()
@@ -23,7 +24,10 @@ export default function ListingDetail() {
         if (active) setItem(result)
       })
       .catch((requestError) => {
-        if (active) setError(requestError.message)
+        if (!active) return
+        const demoItem = findDemoListing(id)
+        if (demoItem) setItem(demoItem)
+        else setError(requestError.message)
       })
     return () => {
       active = false
@@ -91,6 +95,12 @@ export default function ListingDetail() {
         <ArrowLeft size={16} /> Back to the marketplace
       </Link>
       {error && <div className="notice notice-error">{error}</div>}
+      {item.isDemo && (
+        <div className="notice">
+          This is a sample listing for browsing. The marketplace service is unavailable, so it
+          cannot be contacted or purchased right now.
+        </div>
+      )}
       <div className="detail-layout">
         <div className="detail-photo">
           <img src={listingImage(item)} alt={item.title} />
@@ -127,7 +137,7 @@ export default function ListingDetail() {
             </span>
           </div>
           <div className="detail-actions">
-            {!ownListing && item.status === 'active' && (
+            {!ownListing && !item.isDemo && item.status === 'active' && (
               <button
                 className="button button-primary button-large"
                 onClick={contactSeller}
@@ -136,14 +146,16 @@ export default function ListingDetail() {
                 <MessageCircle size={18} /> Message seller
               </button>
             )}
-            <button
-              className={`button button-secondary detail-save ${saved ? 'is-saved' : ''}`}
-              onClick={toggleSaved}
-              disabled={busy}
-            >
-              <Heart size={17} fill={saved ? 'currentColor' : 'none'} />
-              {saved ? 'Saved' : 'Save find'}
-            </button>
+            {!item.isDemo && (
+              <button
+                className={`button button-secondary detail-save ${saved ? 'is-saved' : ''}`}
+                onClick={toggleSaved}
+                disabled={busy}
+              >
+                <Heart size={17} fill={saved ? 'currentColor' : 'none'} />
+                {saved ? 'Saved' : 'Save find'}
+              </button>
+            )}
           </div>
           {ownListing && (
             <Link className="text-link" to={`/sell/${item._id}`}>
