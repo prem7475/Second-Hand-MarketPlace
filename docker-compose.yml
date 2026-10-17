@@ -25,6 +25,7 @@ services:
       MONGODB_URI: mongodb://mongo:27017/refind
       CLIENT_ORIGIN: http://localhost:8080
       TRUST_PROXY: 'true'
+      SEED_DEMO_DATA: 'true'
     depends_on:
       mongo:
         condition: service_healthy

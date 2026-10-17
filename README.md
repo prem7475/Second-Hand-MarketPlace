@@ -31,7 +31,8 @@ The Vite server proxies `/api` and `/socket.io` to `http://localhost:4000`.
 Use `npm run dev` when running MongoDB locally. Docker Compose starts MongoDB,
 the API, and the Nginx client together at <http://localhost:8080>.
 Compose configures the API to trust its single Nginx proxy so authentication
-rate limiting can correctly identify client IPs.
+rate limiting can correctly identify client IPs. It also seeds the demo
+catalog automatically when the API starts.
 
 To add sample listings to a local database, run:
 
@@ -42,9 +43,9 @@ npm run seed -w server
 
 The seed command adds 56 listings (8 in each marketplace category). Each listing
 includes a description, price, condition, location, and Unsplash image. Seeding
-is opt-in and idempotent, and refuses production unless `ALLOW_DEMO_SEED=true`
-is explicitly provided. It creates an unloginable fixture seller and does not
-set a default user password.
+is idempotent, and refuses production unless `ALLOW_DEMO_SEED=true` is explicitly
+provided. It creates an unloginable fixture seller and does not set a default
+user password.
 
 ## Environment
 

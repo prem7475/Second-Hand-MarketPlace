@@ -60,7 +60,7 @@ export default function Header() {
               Sign in
             </NavLink>
           )}
-          <Link className="button button-primary header-sell" to={user ? '/sell' : '/login'}>
+          <Link className="button button-primary header-sell" to="/sell">
             <Plus size={17} /> Sell an item
           </Link>
         </nav>

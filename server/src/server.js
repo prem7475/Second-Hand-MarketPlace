@@ -8,6 +8,7 @@ import { User } from './models/User.js'
 import { Conversation } from './models/Conversation.js'
 import { messageSchema, validate } from './lib/validation.js'
 import { createMessage } from './routes/conversations.js'
+import { seedDemoData } from './seed-demo-data.js'
 
 function readCookie(cookieHeader, name) {
   const entry = cookieHeader
@@ -94,6 +95,7 @@ io.on('connection', (socket) => {
 
 async function start() {
   await mongoose.connect(config.mongoUri)
+  if (process.env.SEED_DEMO_DATA === 'true') await seedDemoData()
   server.listen(config.port, () => {
     console.log(`Refind API listening on port ${config.port}`)
   })
