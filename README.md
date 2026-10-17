@@ -30,6 +30,8 @@ Prerequisites: Node.js 20+, npm, and Docker Desktop (or a locally running MongoD
 The Vite server proxies `/api` and `/socket.io` to `http://localhost:4000`.
 Use `npm run dev` when running MongoDB locally. Docker Compose starts MongoDB,
 the API, and the Nginx client together at <http://localhost:8080>.
+Compose configures the API to trust its single Nginx proxy so authentication
+rate limiting can correctly identify client IPs.
 
 To add sample listings to a local database, run:
 
@@ -38,9 +40,11 @@ $env:SEED_DEMO_DATA = "true"
 npm run seed -w server
 ```
 
-The seed command is opt-in, idempotent, and refuses production unless
-`ALLOW_DEMO_SEED=true` is explicitly provided. It creates an unloginable fixture
-seller and does not set a default user password.
+The seed command adds 56 listings (8 in each marketplace category). Each listing
+includes a description, price, condition, location, and Unsplash image. Seeding
+is opt-in and idempotent, and refuses production unless `ALLOW_DEMO_SEED=true`
+is explicitly provided. It creates an unloginable fixture seller and does not
+set a default user password.
 
 ## Environment
 
@@ -50,6 +54,7 @@ seller and does not set a default user password.
 | `JWT_SECRET`       | API              | JWT signing secret; minimum 32 characters                     |
 | `CLIENT_ORIGIN`    | API              | Allowed browser origin(s), comma-separated                    |
 | `PORT`             | API              | API listen port (default `4000`)                              |
+| `TRUST_PROXY`      | API              | Trust one reverse proxy when set to `true`                    |
 | `VITE_API_URL`     | Client build     | Optional API origin for split frontend/API hosting            |
 | `TEST_API_URL`     | Local smoke test | Local app origin (defaults to `http://localhost:8080`)        |
 | `TEST_MONGODB_URI` | Local smoke test | Local test database URI; should match the API's local MongoDB |

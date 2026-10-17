@@ -24,6 +24,7 @@ services:
       PORT: 4000
       MONGODB_URI: mongodb://mongo:27017/refind
       CLIENT_ORIGIN: http://localhost:8080
+      TRUST_PROXY: 'true'
     depends_on:
       mongo:
         condition: service_healthy

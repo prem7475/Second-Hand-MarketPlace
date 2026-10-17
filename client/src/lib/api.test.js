@@ -8,12 +8,9 @@ test('requires an items array in list responses', () => {
 })
 
 test('rejects list responses without an items array', () => {
-  assert.throws(
-    () => requireItems({}),
-    {
-      name: 'TypeError',
-      message: 'The server returned an invalid response: expected an items array.',
-    },
-  )
+  assert.throws(() => requireItems({}), {
+    name: 'TypeError',
+    message: 'The server returned an invalid response: expected an items array.',
+  })
   assert.throws(() => requireItems({ items: null }), TypeError)
 })

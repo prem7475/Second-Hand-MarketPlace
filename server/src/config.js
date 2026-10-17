@@ -17,4 +17,5 @@ export const config = {
     .map((origin) => origin.trim())
     .filter(Boolean),
   isProduction: process.env.NODE_ENV === 'production',
+  trustProxy: process.env.NODE_ENV === 'production' || process.env.TRUST_PROXY === 'true',
 }

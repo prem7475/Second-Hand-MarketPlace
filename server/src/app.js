@@ -14,7 +14,7 @@ import conversationRoutes from './routes/conversations.js'
 export function createApp() {
   const app = express()
   app.disable('x-powered-by')
-  app.set('trust proxy', config.isProduction ? 1 : false)
+  app.set('trust proxy', config.trustProxy ? 1 : false)
   app.use(
     helmet({
       contentSecurityPolicy: {
