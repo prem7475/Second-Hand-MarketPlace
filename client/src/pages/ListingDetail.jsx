@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { ArrowLeft, ArrowUpRight, Heart, MapPin, MessageCircle, ShieldCheck } from 'lucide-react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
-import { request } from '../lib/api.js'
+import { request, requireItems } from '../lib/api.js'
 import { formatPrice, timeAgo } from '../lib/format.js'
 import { listingImage } from '../components/ListingCard.jsx'
 import Loading from '../components/Loading.jsx'
@@ -34,7 +34,8 @@ export default function ListingDetail() {
     if (!user) return
     let active = true
     request('/favorites')
-      .then(({ items }) => {
+      .then((result) => {
+        const items = requireItems(result)
         if (active) setSaved(items.some((favorite) => favorite._id === id))
       })
       .catch((requestError) => console.error('Unable to check saved status:', requestError))

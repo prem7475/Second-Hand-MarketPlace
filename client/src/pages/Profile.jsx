@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { ArrowRight, MapPin, PackagePlus, Pencil, UserRound } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext.jsx'
-import { request } from '../lib/api.js'
+import { request, requireItems } from '../lib/api.js'
 import { formatPrice } from '../lib/format.js'
 import { listingImage } from '../components/ListingCard.jsx'
 import Loading from '../components/Loading.jsx'
@@ -19,7 +19,8 @@ export default function Profile() {
   useEffect(() => {
     let active = true
     request('/listings/mine')
-      .then(({ items: listings }) => {
+      .then((result) => {
+        const listings = requireItems(result)
         if (active) setItems(listings)
       })
       .catch((requestError) => {

@@ -13,7 +13,7 @@ import { useEffect, useState } from 'react'
 import ListingCard from '../components/ListingCard.jsx'
 import Loading from '../components/Loading.jsx'
 import { useListings } from '../hooks/useListings.js'
-import { request } from '../lib/api.js'
+import { request, requireItems } from '../lib/api.js'
 import { useAuth } from '../context/AuthContext.jsx'
 
 const categories = [
@@ -40,7 +40,8 @@ export default function Home() {
       }
     }
     request('/favorites')
-      .then(({ items: favorites }) => {
+      .then((result) => {
+        const favorites = requireItems(result)
         if (active) setSavedItems(new Set(favorites.map((item) => item._id)))
       })
       .catch((error) => {

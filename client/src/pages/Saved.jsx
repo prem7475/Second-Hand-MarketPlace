@@ -3,7 +3,7 @@ import { Heart } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import ListingCard from '../components/ListingCard.jsx'
 import Loading from '../components/Loading.jsx'
-import { request } from '../lib/api.js'
+import { request, requireItems } from '../lib/api.js'
 
 export default function Saved() {
   const [items, setItems] = useState([])
@@ -13,7 +13,8 @@ export default function Saved() {
   useEffect(() => {
     let active = true
     request('/favorites')
-      .then(({ items: savedItems }) => {
+      .then((result) => {
+        const savedItems = requireItems(result)
         if (active) setItems(savedItems)
       })
       .catch((requestError) => {

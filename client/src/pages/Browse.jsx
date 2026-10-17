@@ -4,7 +4,7 @@ import { useSearchParams } from 'react-router-dom'
 import ListingCard from '../components/ListingCard.jsx'
 import Loading from '../components/Loading.jsx'
 import { useListings } from '../hooks/useListings.js'
-import { request } from '../lib/api.js'
+import { request, requireItems } from '../lib/api.js'
 import { useAuth } from '../context/AuthContext.jsx'
 
 const categories = [
@@ -33,7 +33,8 @@ export default function Browse() {
     }
     let active = true
     request('/favorites')
-      .then(({ items }) => {
+      .then((result) => {
+        const items = requireItems(result)
         if (active) setSaved(new Set(items.map((item) => item._id)))
       })
       .catch((error) => {

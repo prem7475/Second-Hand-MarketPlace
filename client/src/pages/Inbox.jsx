@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { ArrowLeft, MessageCircle, Send } from 'lucide-react'
 import { Link, useParams } from 'react-router-dom'
 import { io } from 'socket.io-client'
-import { request } from '../lib/api.js'
+import { request, requireItems } from '../lib/api.js'
 import { useAuth } from '../context/AuthContext.jsx'
 import { listingImage } from '../components/ListingCard.jsx'
 import Loading from '../components/Loading.jsx'
@@ -32,7 +32,8 @@ export default function Inbox() {
   useEffect(() => {
     let active = true
     request('/conversations')
-      .then(({ items }) => {
+      .then((result) => {
+        const items = requireItems(result)
         if (active) setConversations(items)
       })
       .catch((requestError) => {
@@ -54,7 +55,8 @@ export default function Inbox() {
     let active = true
     setError('')
     request(`/conversations/${id}/messages`)
-      .then(({ items }) => {
+      .then((result) => {
+        const items = requireItems(result)
         if (active) setMessages(items)
       })
       .catch((requestError) => {

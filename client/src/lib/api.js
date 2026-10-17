@@ -1,4 +1,4 @@
-const apiBase = import.meta.env.VITE_API_URL || ''
+const apiBase = import.meta.env?.VITE_API_URL || ''
 let csrfToken = ''
 
 export class ApiError extends Error {
@@ -11,6 +11,13 @@ export class ApiError extends Error {
 
 export function setCsrfToken(value) {
   csrfToken = value || ''
+}
+
+export function requireItems(payload) {
+  if (!Array.isArray(payload?.items)) {
+    throw new TypeError('The server returned an invalid response: expected an items array.')
+  }
+  return payload.items
 }
 
 export async function request(path, options = {}) {
