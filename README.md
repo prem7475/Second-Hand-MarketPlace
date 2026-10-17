@@ -162,25 +162,29 @@ well, run `docker compose down --volumes`; this permanently removes the
    `npm install` as the build command, and `npm run start -w server` as the
    start command. Health check path: `/api/health`.
 3. In the Render service's Environment settings, set `MONGODB_URI` to the
-   Atlas connection string, `CLIENT_ORIGIN` to the exact Netlify site origin,
-   and ensure `NODE_ENV=production`. Generate a new, unique `JWT_SECRET` in
-   Render (at least 32 random characters); never reuse or upload the local
-   `.env` secret. Redeploy after changing environment values.
+   Atlas connection string and ensure `CLIENT_ORIGIN` matches the Netlify site
+   origin (`https://refind-olx.netlify.app` in the checked-in Blueprint).
+   Ensure `NODE_ENV=production`. Generate a new, unique `JWT_SECRET` in Render
+   (at least 32 random characters); never reuse or upload the local `.env`
+   secret. Redeploy after changing environment values.
 4. In Netlify, choose **Add new site → Import an existing project** and connect
    the repository. Keep the base directory at the repository root. The checked-in
    `netlify.toml` configures the build command and `client/dist` publish folder.
-5. In Netlify **Site configuration → Environment variables**, set
-   `VITE_API_URL` to the Render service's HTTPS origin, without a trailing
-   `/api` (for example, `https://your-api.onrender.com`). Trigger a new deploy
-   after setting it; Vite embeds this value at build time.
-6. Set Render `CLIENT_ORIGIN` to the deployed Netlify origin exactly, including
-   `https://` and any `www` subdomain. If you add a custom frontend domain,
-   update `CLIENT_ORIGIN` and redeploy the API.
-7. Verify the Render `/api/health` endpoint, account registration, listing
-   creation, favorites, and real-time messaging from the deployed site. Render
-   production cookies use `Secure` and `SameSite=None`; use a frontend and API
-   custom domain on the same parent domain where possible because browsers may
-   restrict cross-site cookies between separate Netlify and Render domains.
+5. The checked-in `netlify.toml` proxies `/api/*` to
+   `https://refind-api.onrender.com/api/*` before the client-side route
+   fallback. If your Render service has a different hostname, update that
+   proxy target and redeploy the frontend. Remove any stale `VITE_API_URL`
+   override from Netlify so browser API calls use the same-origin proxy.
+6. If you use a custom Netlify domain, update `CLIENT_ORIGIN` in `render.yaml`
+   to that exact origin (including `https://` and any `www` subdomain), then
+   apply the Blueprint change and redeploy the API.
+7. Verify `https://refind-api.onrender.com/api/health` returns JSON with
+   `{"status":"ok","service":"refind-api"}` before testing the Netlify proxy,
+   account registration, listing creation, favorites, and real-time messaging
+   from the deployed site. Render production cookies use `Secure` and
+   `SameSite=None`; use a frontend and API custom domain on the same parent
+   domain where possible because browsers may restrict cross-site cookies
+   between separate Netlify and Render domains.
 
 The Netlify rewrite in `netlify.toml` serves the client-side router. Production
 MongoDB, hosting credentials, and domain verification are configured in the

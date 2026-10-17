@@ -34,7 +34,14 @@ export async function request(path, options = {}) {
     credentials: 'include',
     body: options.body === undefined ? undefined : JSON.stringify(options.body),
   })
-  const payload = await response.json().catch(() => ({}))
+  const contentType = response.headers.get('content-type') || ''
+  if (!contentType.includes('application/json') && !contentType.includes('+json')) {
+    throw new ApiError(
+      'The marketplace API returned a non-JSON response. Check the Netlify API proxy and Render API deployment.',
+      response.status,
+    )
+  }
+  const payload = await response.json()
   if (!response.ok) {
     throw new ApiError(
       payload.message || 'The request could not be completed.',
