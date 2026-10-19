@@ -13,6 +13,7 @@ import conversationRoutes from './routes/conversations.js'
 
 export function createApp() {
   const app = express()
+  const clientOrigins = new Set([...config.clientOrigins, 'https://refind-olx.netlify.app'])
   app.disable('x-powered-by')
   app.set('trust proxy', config.trustProxy ? 1 : false)
   app.use(
@@ -29,7 +30,7 @@ export function createApp() {
     cors({
       credentials: true,
       origin(origin, callback) {
-        if (!origin || config.clientOrigins.includes(origin)) return callback(null, true)
+        if (!origin || clientOrigins.has(origin)) return callback(null, true)
         callback(new HttpError(403, 'This origin is not allowed to access the API.'))
       },
     }),

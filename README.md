@@ -176,16 +176,16 @@ well, run `docker compose down --volumes`; this permanently removes the
    the repository. Keep the base directory at the repository root. The checked-in
    `netlify.toml` configures the build command and `client/dist` publish folder.
 5. The checked-in `netlify.toml` proxies `/api/*` to
-   `https://refind-api.onrender.com/api/*` and `/socket.io/*` to the API before
-   the client-side route fallback. Socket.IO uses same-origin polling through
-   this proxy so session cookies work consistently. If your Render service
-   has a different hostname, update both proxy targets and redeploy the
-   frontend. Remove any stale `VITE_API_URL` override from Netlify so REST API
-   calls use the same-origin proxy.
+   `https://second-hand-marketplace-wzvy.onrender.com/api/*` and
+   `/socket.io/*` to the API before the client-side route fallback. Socket.IO
+   uses same-origin polling through this proxy so session cookies work
+   consistently. If your Render service has a different hostname, update both
+   proxy targets and redeploy the frontend. Remove any stale `VITE_API_URL`
+   override from Netlify so REST API calls use the same-origin proxy.
 6. If you use a custom Netlify domain, update `CLIENT_ORIGIN` in `render.yaml`
    to that exact origin (including `https://` and any `www` subdomain), then
    apply the Blueprint change and redeploy the API.
-7. Verify `https://refind-api.onrender.com/api/health` returns JSON with
+7. Verify `https://second-hand-marketplace-wzvy.onrender.com/api/health` returns JSON with
    `{"status":"ok","service":"refind-api"}` before testing the Netlify proxy,
    account registration, listing creation, favorites, and real-time messaging
    from the deployed site. A `405` or `404` response means the Render service

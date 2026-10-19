@@ -23,3 +23,24 @@ test('CSRF bootstrap GETs do not consume the auth write-request rate limit', asy
     await response.body.cancel()
   }
 })
+
+test('allows the deployed Netlify site to access the API', async (t) => {
+  const server = http.createServer(createApp())
+  await new Promise((resolve) => server.listen(0, '127.0.0.1', resolve))
+  t.after(
+    () =>
+      new Promise((resolve, reject) => {
+        server.close((error) => (error ? reject(error) : resolve()))
+      }),
+  )
+
+  const address = server.address()
+  const response = await fetch(`http://127.0.0.1:${address.port}/api/auth/csrf`, {
+    headers: { Origin: 'https://refind-olx.netlify.app' },
+  })
+  assert.equal(response.status, 200)
+  assert.equal(
+    response.headers.get('access-control-allow-origin'),
+    'https://refind-olx.netlify.app',
+  )
+})

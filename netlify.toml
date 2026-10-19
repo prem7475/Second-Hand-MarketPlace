@@ -5,19 +5,13 @@
 
 [[redirects]]
   from = "/api/*"
-  to = "https://refind-api.onrender.com/api/:splat"
+  to = "https://second-hand-marketplace-wzvy.onrender.com/api/:splat"
   status = 200
   force = true
 
 [[redirects]]
   from = "/socket.io/*"
-  to = "https://refind-api.onrender.com/socket.io/:splat"
-  status = 200
-  force = true
-
-[[redirects]]
-  from = "/socket.io/*"
-  to = "https://refind-api.onrender.com/socket.io/:splat"
+  to = "https://second-hand-marketplace-wzvy.onrender.com/socket.io/:splat"
   status = 200
   force = true
 
