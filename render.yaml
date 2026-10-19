@@ -2,8 +2,10 @@ services:
   - type: web
     name: refind-api
     runtime: node
+    branch: main
     plan: starter
     rootDir: .
+    autoDeploy: true
     buildCommand: npm install
     startCommand: npm run start -w server
     healthCheckPath: /api/health
