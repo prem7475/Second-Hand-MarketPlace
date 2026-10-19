@@ -34,3 +34,23 @@ test('reports HTML API responses as deployment configuration errors', async () =
     globalThis.fetch = originalFetch
   }
 })
+
+test('preserves error messages returned by API gateways', async () => {
+  const originalFetch = globalThis.fetch
+  globalThis.fetch = async () =>
+    new Response(JSON.stringify({ error: 'not found' }), {
+      status: 404,
+      headers: { 'content-type': 'application/json' },
+    })
+
+  try {
+    await assert.rejects(request('/auth/login'), (error) => {
+      assert.ok(error instanceof ApiError)
+      assert.equal(error.message, 'not found')
+      assert.equal(error.status, 404)
+      return true
+    })
+  } finally {
+    globalThis.fetch = originalFetch
+  }
+})

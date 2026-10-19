@@ -30,3 +30,36 @@ test('demo catalog contains eight complete, valid listings in every category', (
     }
   }
 })
+
+test('demo listings use romanized Hindi titles, Indian locations, and rupee-scale prices', () => {
+  const IndianRegions = [
+    'Assam',
+    'Chandigarh',
+    'Delhi',
+    'Goa',
+    'Gujarat',
+    'Haryana',
+    'Himachal Pradesh',
+    'Karnataka',
+    'Kerala',
+    'Madhya Pradesh',
+    'Maharashtra',
+    'Meghalaya',
+    'Punjab',
+    'Rajasthan',
+    'Tamil Nadu',
+    'Telangana',
+    'Uttar Pradesh',
+    'Uttarakhand',
+    'West Bengal',
+  ]
+
+  for (const item of examples) {
+    assert.match(item.title, /^[\x20-\x7E]+$/, `${item.title} should use Latin letters`)
+    assert.ok(
+      IndianRegions.some((region) => item.location.endsWith(region)),
+      item.location,
+    )
+    assert.ok(item.price >= 250, `${item.title} should have a realistic rupee price`)
+  }
+})

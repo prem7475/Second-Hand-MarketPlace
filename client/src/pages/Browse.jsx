@@ -148,7 +148,7 @@ export default function Browse() {
                   min="0"
                   value={searchParams.get('minPrice') || ''}
                   onChange={(event) => update('minPrice', event.target.value)}
-                  placeholder="$0"
+                  placeholder="₹0"
                 />
               </label>
               <span>—</span>

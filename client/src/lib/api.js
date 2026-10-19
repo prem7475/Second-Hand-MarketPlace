@@ -44,7 +44,7 @@ export async function request(path, options = {}) {
   const payload = await response.json()
   if (!response.ok) {
     throw new ApiError(
-      payload.message || 'The request could not be completed.',
+      payload.message || payload.error || 'The request could not be completed.',
       response.status,
       payload.errors || [],
     )

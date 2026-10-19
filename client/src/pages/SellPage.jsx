@@ -115,7 +115,7 @@ export default function SellPage() {
             required
             minLength="3"
             maxLength="100"
-            placeholder="e.g. Mid-century oak side table"
+            placeholder="e.g. Sheesham ki chhoti mez"
             value={form.title}
             onChange={(event) => update('title', event.target.value)}
           />
@@ -132,7 +132,7 @@ export default function SellPage() {
             minLength="10"
             maxLength="3000"
             rows="5"
-            placeholder="Share the details, condition, and anything that makes it special..."
+            placeholder="Kaisa hai, kitna purana hai aur iske baare mein jo bhi batana ho..."
             value={form.description}
             onChange={(event) => update('description', event.target.value)}
           />
@@ -183,9 +183,9 @@ export default function SellPage() {
         </div>
         <div className="form-two-col">
           <label>
-            Price <span className="field-inline-note">USD</span>
+            Price <span className="field-inline-note">INR</span>
             <div className="price-field">
-              <span>$</span>
+              <span>₹</span>
               <input
                 required
                 type="number"
@@ -205,7 +205,7 @@ export default function SellPage() {
               maxLength="100"
               value={form.location}
               onChange={(event) => update('location', event.target.value)}
-              placeholder="e.g. Portland, OR"
+              placeholder="e.g. Pune, Maharashtra"
             />
           </label>
         </div>

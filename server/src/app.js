@@ -42,6 +42,7 @@ export function createApp() {
     rateLimit({
       windowMs: 15 * 60 * 1000,
       limit: 30,
+      skip: (req) => ['GET', 'HEAD', 'OPTIONS'].includes(req.method),
       standardHeaders: 'draft-7',
       legacyHeaders: false,
     }),

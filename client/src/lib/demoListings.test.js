@@ -22,8 +22,8 @@ test('provides eight image-backed demo listings for every category', () => {
 })
 
 test('demo catalog supports search and resolves item details', () => {
-  const result = getDemoListings(new URLSearchParams('q=coffee'))
-  assert.ok(result.items.some((item) => item.title.toLowerCase().includes('coffee')))
+  const result = getDemoListings(new URLSearchParams('q=chai'))
+  assert.ok(result.items.some((item) => item.title.toLowerCase().includes('chai')))
   assert.ok(findDemoListing(result.items[0]._id))
 })
 

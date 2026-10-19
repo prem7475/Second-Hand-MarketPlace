@@ -2,9 +2,10 @@ import test from 'node:test'
 import assert from 'node:assert/strict'
 import { formatPrice, timeAgo } from './format.js'
 
-test('formats prices in dollars without fractional digits', () => {
-  assert.equal(formatPrice(125), '$125')
-  assert.equal(formatPrice(0), '$0')
+test('formats prices in rupees without fractional digits', () => {
+  assert.equal(formatPrice(125), '₹125')
+  assert.equal(formatPrice(125000), '₹1,25,000')
+  assert.equal(formatPrice(0), '₹0')
 })
 
 test('formats listing dates into useful relative labels', () => {

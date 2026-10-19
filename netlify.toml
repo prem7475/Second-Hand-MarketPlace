@@ -3,6 +3,9 @@
   command = "npm run build -w client"
   publish = "client/dist"
 
+[build.environment]
+  VITE_SOCKET_URL = "https://refind-api.onrender.com"
+
 [[redirects]]
   from = "/api/*"
   to = "https://refind-api.onrender.com/api/:splat"
