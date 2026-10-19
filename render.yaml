@@ -3,6 +3,7 @@ services:
     name: refind-api
     runtime: node
     plan: starter
+    rootDir: .
     buildCommand: npm install
     startCommand: npm run start -w server
     healthCheckPath: /api/health

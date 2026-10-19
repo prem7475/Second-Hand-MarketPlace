@@ -60,7 +60,6 @@ unavailable. Demo listings are browse-only until the API is restored.
 | `PORT`             | API              | API listen port (default `4000`)                              |
 | `TRUST_PROXY`      | API              | Trust one reverse proxy when set to `true`                    |
 | `VITE_API_URL`     | Client build     | Optional API origin for split frontend/API hosting            |
-| `VITE_SOCKET_URL`  | Client build     | Socket.IO server origin; Netlify sets this to the Render API  |
 | `TEST_API_URL`     | Local smoke test | Local app origin (defaults to `http://localhost:8080`)        |
 | `TEST_MONGODB_URI` | Local smoke test | Local test database URI; should match the API's local MongoDB |
 
@@ -177,11 +176,12 @@ well, run `docker compose down --volumes`; this permanently removes the
    the repository. Keep the base directory at the repository root. The checked-in
    `netlify.toml` configures the build command and `client/dist` publish folder.
 5. The checked-in `netlify.toml` proxies `/api/*` to
-   `https://refind-api.onrender.com/api/*` before the client-side route
-   fallback and sets `VITE_SOCKET_URL` to the Render API origin for real-time
-   conversations. If your Render service has a different hostname, update both
-   values and redeploy the frontend. Remove any stale `VITE_API_URL` override
-   from Netlify so REST API calls use the same-origin proxy.
+   `https://refind-api.onrender.com/api/*` and `/socket.io/*` to the API before
+   the client-side route fallback. Socket.IO uses same-origin polling through
+   this proxy so session cookies work consistently. If your Render service
+   has a different hostname, update both proxy targets and redeploy the
+   frontend. Remove any stale `VITE_API_URL` override from Netlify so REST API
+   calls use the same-origin proxy.
 6. If you use a custom Netlify domain, update `CLIENT_ORIGIN` in `render.yaml`
    to that exact origin (including `https://` and any `www` subdomain), then
    apply the Blueprint change and redeploy the API.
@@ -190,7 +190,8 @@ well, run `docker compose down --volumes`; this permanently removes the
    account registration, listing creation, favorites, and real-time messaging
    from the deployed site. A `405` or `404` response means the Render service
    is not running this repository's API routes; verify its repository, branch,
-   root directory, and start command (`npm run start -w server`) in Render.
+   root directory (`.`), and start command (`npm run start -w server`) in
+   Render.
    Render production cookies use `Secure` and `SameSite=None`; use a frontend
    and API custom domain on the same parent domain where possible because
    browsers may restrict cross-site cookies between separate Netlify and

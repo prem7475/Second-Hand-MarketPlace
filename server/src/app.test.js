@@ -1,7 +1,9 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import http from 'node:http'
-import { createApp } from './app.js'
+
+process.env.JWT_SECRET = 'test-only-secret-that-is-at-least-thirty-two-characters'
+const { createApp } = await import('./app.js')
 
 test('CSRF bootstrap GETs do not consume the auth write-request rate limit', async (t) => {
   const server = http.createServer(createApp())

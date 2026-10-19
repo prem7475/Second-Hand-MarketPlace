@@ -62,9 +62,10 @@ export default function Inbox() {
       .catch((requestError) => {
         if (active) setError(requestError.message)
       })
-    const socketUrl =
-      import.meta.env.VITE_SOCKET_URL || import.meta.env.VITE_API_URL || window.location.origin
-    const socket = io(socketUrl, { withCredentials: true })
+    const socket = io(window.location.origin, {
+      withCredentials: true,
+      transports: ['polling'],
+    })
     socketRef.current = socket
     socket.on('connect', () => {
       setSocketReady(false)
