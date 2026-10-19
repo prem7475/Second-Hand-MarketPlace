@@ -27,7 +27,9 @@ export default function Browse() {
   const [saved, setSaved] = useState(new Set())
   const [query, setQuery] = useState(searchParams.get('q') || '')
 
-  useEffect(() => setQuery(searchParams.get('q') || ''), [searchParams])
+  useEffect(() => {
+    setQuery(searchParams.get('q') || '')
+  }, [searchParams])
   useEffect(() => {
     if (!user) {
       setSaved(new Set())

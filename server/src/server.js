@@ -30,12 +30,20 @@ app.set('io', io)
 
 io.use(async (socket, next) => {
   try {
-    const token = readCookie(socket.handshake.headers.cookie, 'session')
+    const socketToken = socket.handshake.auth?.token
+    const token = socketToken || readCookie(socket.handshake.headers.cookie, 'session')
     if (!token) return next(new Error('Authentication required.'))
-    const payload = jwt.verify(token, config.jwtSecret, {
-      issuer: 'refind-marketplace',
-      audience: 'refind-client',
-    })
+    const payload = socketToken
+      ? jwt.verify(token, config.jwtSecret, {
+          issuer: 'refind-marketplace',
+          audience: 'refind-socket',
+        })
+      : jwt.verify(token, config.jwtSecret, {
+          issuer: 'refind-marketplace',
+          audience: 'refind-client',
+        })
+    if (socketToken && payload.purpose !== 'socket')
+      return next(new Error('Authentication required.'))
     const user = await User.findById(payload.sub)
     if (!user) return next(new Error('Authentication required.'))
     socket.data.user = user

@@ -7,6 +7,9 @@ import { useAuth } from '../context/AuthContext.jsx'
 import { listingImage } from '../components/ListingCard.jsx'
 import Loading from '../components/Loading.jsx'
 
+const socketOrigin =
+  import.meta.env?.VITE_SOCKET_URL || import.meta.env?.VITE_API_URL || window.location.origin
+
 function formatTime(value) {
   return new Date(value).toLocaleString(undefined, {
     month: 'short',
@@ -48,6 +51,7 @@ export default function Inbox() {
   }, [])
 
   useEffect(() => {
+    setSocketReady(false)
     if (!id) {
       setMessages([])
       return undefined
@@ -57,14 +61,29 @@ export default function Inbox() {
     request(`/conversations/${id}/messages`)
       .then((result) => {
         const items = requireItems(result)
-        if (active) setMessages(items)
+        if (active) {
+          setMessages((current) => {
+            const messagesById = new Map(items.map((item) => [item._id, item]))
+            current.forEach((item) => messagesById.set(item._id, item))
+            return [...messagesById.values()].sort(
+              (left, right) => new Date(left.createdAt) - new Date(right.createdAt),
+            )
+          })
+        }
       })
       .catch((requestError) => {
         if (active) setError(requestError.message)
       })
-    const socket = io(window.location.origin, {
-      withCredentials: true,
-      transports: ['polling'],
+    const socket = io(socketOrigin, {
+      auth(callback) {
+        request('/auth/socket-token', { method: 'POST', body: {} })
+          .then(({ token }) => callback({ token }))
+          .catch((requestError) => {
+            if (active) setError(requestError.message)
+            callback({})
+          })
+      },
+      transports: ['websocket', 'polling'],
     })
     socketRef.current = socket
     socket.on('connect', () => {
@@ -97,12 +116,14 @@ export default function Inbox() {
     })
     return () => {
       active = false
-      socket.disconnect()
+      socketRef.current?.disconnect()
       socketRef.current = null
     }
   }, [id])
 
-  useEffect(() => bottomRef.current?.scrollIntoView({ behavior: 'smooth' }), [messages])
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
+  }, [messages])
 
   const sendMessage = useCallback(
     async (event) => {

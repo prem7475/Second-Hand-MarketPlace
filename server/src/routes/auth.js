@@ -88,6 +88,15 @@ router.get('/me', authenticate, (req, res) => {
   res.json({ user: req.user })
 })
 
+router.post('/socket-token', authenticate, (req, res) => {
+  const token = jwt.sign({ sub: req.user.id, purpose: 'socket' }, config.jwtSecret, {
+    expiresIn: '1m',
+    issuer: 'refind-marketplace',
+    audience: 'refind-socket',
+  })
+  res.json({ token })
+})
+
 router.post('/logout', (_req, res) => {
   res.clearCookie('session', { ...cookieOptions, maxAge: undefined })
   res.json({ message: 'You have been signed out.' })

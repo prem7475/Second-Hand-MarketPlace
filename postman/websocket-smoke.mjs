@@ -72,11 +72,23 @@ class ApiSession {
     assert.ok(this.cookies.get('session'), 'Registration should set an HTTP-only session cookie')
     return result.payload.user
   }
+
+  async socketToken() {
+    const result = await this.request('/api/auth/socket-token', {
+      method: 'POST',
+      body: {},
+    })
+    assert.equal(result.status, 200, `Socket token request failed: ${JSON.stringify(result.payload)}`)
+    assert.ok(result.payload.token, 'Authenticated socket token should be returned')
+    return result.payload.token
+  }
 }
 
-function connectSocket(sessionCookie) {
+function connectSocket({ token, sessionCookie } = {}) {
   const socket = io(baseUrl.origin, {
+    ...(token ? { auth: { token } } : {}),
     ...(sessionCookie ? { extraHeaders: { Cookie: `session=${sessionCookie}` } } : {}),
+    transports: ['websocket', 'polling'],
     reconnection: false,
     timeout: 5000,
   })
@@ -134,11 +146,14 @@ async function run() {
 
   try {
     const sellerSession = new ApiSession()
-    const seller = await sellerSession.register(testAccounts[0])
+    await sellerSession.register(testAccounts[0])
     const buyerSession = new ApiSession()
     await buyerSession.register(testAccounts[1])
     const outsiderSession = new ApiSession()
     await outsiderSession.register(testAccounts[2])
+    const sellerSocketToken = await sellerSession.socketToken()
+    const buyerSocketToken = await buyerSession.socketToken()
+    const outsiderSocketToken = await outsiderSession.socketToken()
 
     const created = await sellerSession.request('/api/listings', {
       method: 'POST',
@@ -165,16 +180,25 @@ async function run() {
     await assert.rejects(connectSocket(), /Authentication required/)
     console.log('PASS unauthenticated WebSocket connections are rejected')
 
-    const outsider = await connectSocket(outsiderSession.cookies.get('session'))
+    const outsider = await connectSocket({ token: outsiderSocketToken })
     const outsiderJoin = await joinConversation(outsider, conversationId)
     assert.equal(outsiderJoin.ok, false, 'Non-members must not join a conversation room')
     console.log('PASS non-members cannot join conversation rooms')
 
-    const sellerSocket = await connectSocket(sellerSession.cookies.get('session'))
-    const buyerSocket = await connectSocket(buyerSession.cookies.get('session'))
+    const legacyCookieSocket = await connectSocket({
+      sessionCookie: sellerSession.cookies.get('session'),
+    })
+    assert.equal((await joinConversation(legacyCookieSocket, conversationId)).ok, true)
+    legacyCookieSocket.disconnect()
+    console.log('PASS existing cookie-authenticated WebSocket clients remain supported')
+
+    const sellerSocket = await connectSocket({ token: sellerSocketToken })
+    const buyerSocket = await connectSocket({ token: buyerSocketToken })
     assert.equal((await joinConversation(sellerSocket, conversationId)).ok, true)
     assert.equal((await joinConversation(buyerSocket, conversationId)).ok, true)
-    console.log('PASS authorized participants can connect and join their room')
+    assert.equal(sellerSocket.io.engine.transport.name, 'websocket')
+    assert.equal(buyerSocket.io.engine.transport.name, 'websocket')
+    console.log('PASS authorized participants connect over WebSocket and join their room')
 
     const incomingMessage = new Promise((resolve, reject) => {
       const timeout = setTimeout(() => reject(new Error('No message:new event arrived.')), 5000)

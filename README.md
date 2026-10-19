@@ -61,6 +61,7 @@ unavailable. Demo listings are browse-only until the API is restored.
 | `PORT`             | API              | API listen port (default `4000`)                              |
 | `TRUST_PROXY`      | API              | Trust one reverse proxy when set to `true`                    |
 | `VITE_API_URL`     | Client build     | Optional API origin for split frontend/API hosting            |
+| `VITE_SOCKET_URL`  | Client build     | Optional Socket.IO origin; Netlify uses the Render API host   |
 | `TEST_API_URL`     | Local smoke test | Local app origin (defaults to `http://localhost:8080`)        |
 | `TEST_MONGODB_URI` | Local smoke test | Local test database URI; should match the API's local MongoDB |
 
@@ -78,7 +79,8 @@ and WebSocket requests to the API service.
 
 - `GET /api/health`
 - `GET /api/auth/csrf`, `POST /api/auth/register`, `POST /api/auth/login`,
-  `GET /api/auth/me`, `PATCH /api/auth/me`, `POST /api/auth/logout`
+  `GET /api/auth/me`, `PATCH /api/auth/me`, `POST /api/auth/logout`,
+  `POST /api/auth/socket-token`
 - `GET /api/listings`, `GET /api/listings/:id`, `GET /api/listings/mine`,
   `POST /api/listings`, `PATCH /api/listings/:id`, `DELETE /api/listings/:id`
 - `GET /api/favorites`, `POST /api/favorites/:listingId`,
@@ -97,10 +99,13 @@ client initializes the CSRF token automatically. The Postman collection is in
 
 ### WebSocket events
 
-Authenticated clients can emit `conversation:join` with a conversation id and
-`message:send` with `{ "conversationId": "...", "body": "..." }`. New messages
-are delivered to authorized room members as `message:new`. Conversation
-membership and payload validation are checked on the server.
+Authenticated clients obtain a one-minute socket token from
+`POST /api/auth/socket-token`, then connect directly to the Socket.IO host using
+WebSocket (with polling fallback). They can emit `conversation:join` with a
+conversation id and `message:send` with
+`{ "conversationId": "...", "body": "..." }`. New messages are delivered to
+authorized room members as `message:new`. Conversation membership and payload
+validation are checked on the server.
 
 ## Quality checks
 
@@ -131,10 +136,11 @@ with `docker compose up --build -d`), then run:
 npm run test:websocket
 ```
 
-The smoke test uses temporary local-only test accounts and removes its users,
+The smoke test uses temporary local-only test accounts and removes their users,
 listing, conversation, and messages when finished. It verifies rejected
-unauthenticated sockets, conversation membership, message delivery, and REST
-history persistence. Set `TEST_API_URL` if the local app is not at
+unauthenticated sockets, short-lived socket authentication, WebSocket transport,
+conversation membership, message delivery, and REST history persistence. Set
+`TEST_API_URL` if the local app is not at
 `http://localhost:8080`. The Compose MongoDB port is bound to loopback so the
 test can clean its temporary data. Compose exposes MongoDB on `127.0.0.1:27018`
 to avoid conflicting with a MongoDB server already using the default port.
