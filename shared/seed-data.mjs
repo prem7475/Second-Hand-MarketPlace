@@ -73,4 +73,39 @@ export const examples = [
   listing('Other', 'Paani ke rang aur chhoti copy', 'Rang abhi kaafi bache hain, do brush aur aadhi bhari copy bhi de dunga.', 500, 'Good', 'Mysuru, Karnataka', 'photo-1513364776144-60967b0f800f'),
   listing('Other', 'Chhota hawa mein khaana pakaane ka cooker', 'Aloo aur snacks banaane ke liye liya tha, saaf karke rakha hai. Tokri aur taar dono saath hain.', 2200, 'Good', 'Chennai, Tamil Nadu', 'photo-1585515320310-259814833e62'),
   listing('Other', 'Ghar mein khelne wale board game', 'Teen game hain aur saare mohre gin kar rakhe hain. Weekend par kaafi khela, ab bas jagah lete hain.', 750, 'Good', 'Amritsar, Punjab', 'photo-1606092195730-5d7b9af1efc5'),
+
+  listing('Furniture', 'Baithak ke liye lakdi ka takht', 'Dadaji ke ghar se aaya tha, ab naya sofa aa gaya hai. Upar gadda daal kar baithne ke liye badhiya hai.', 8500, 'Good', 'Jodhpur, Rajasthan', 'photo-1494438639946-1ebd1d20bf85'),
+  listing('Furniture', 'Do baans ki moodiyan', 'Chhat par chai peene ke liye rakhi thi. Halke hain, par aaram se baith sakte ho. Jodi mein de raha hoon.', 1800, 'Good', 'Patna, Bihar', 'photo-1555041469-a586c61ea9bc'),
+  listing('Furniture', 'Aam ki lakdi ka palna', 'Bachche ke liye liya tha, ab usko zaroorat nahi. Jhulne wala hissa aur chain dono theek hain.', 3200, 'Excellent', 'Nashik, Maharashtra', 'photo-1505693416388-ac5ce068fe85'),
+  listing('Furniture', 'Chhota mandir rakhne ka takhta', 'Ghar ke mandir ke neeche rakha tha. Saaf hai, deewar par lagane ke screw bhi saath de dunga.', 1400, 'Good', 'Haridwar, Uttarakhand', 'photo-1493663284031-b7e3aefcae8e'),
+
+  listing('Electronics', 'Chawal peesne wala mixer', 'Chutney aur masale peesne mein achha chala. Teen jar aur dhakkan hain, bas ek jar par halki kharoch hai.', 1700, 'Good', 'Coimbatore, Tamil Nadu', 'photo-1585515320310-259814833e62'),
+  listing('Electronics', 'Purana par achha smartphone', 'Phone reset kar diya hai, call aur WhatsApp ke liye sahi hai. Charger aur cover saath milenge.', 4800, 'Good', 'Noida, Uttar Pradesh', 'photo-1511707171634-5f897ff02aa9'),
+  listing('Electronics', 'Ghar ke liye chhota printer', 'Bachchon ke project ke kaam aata tha. Ink kam hai, naya cartridge daaloge toh phir chal padega.', 2600, 'Fair', 'Vadodara, Gujarat', 'photo-1516321318423-f06f85e504b3'),
+  listing('Electronics', 'Sangeet sunne ka radio', 'Aajkal phone par gaane sunta hoon toh radio almari mein pada hai. FM aur speaker dono chalte hain.', 950, 'Good', 'Kanpur, Uttar Pradesh', 'photo-1505740420928-5e560c06d30e'),
+
+  listing('Fashion', 'Bandhani wali odhni', 'Jaipur se li thi, do shaadiyon mein pehni hai. Rang abhi bhi chamakdaar hai aur koi daag nahi.', 1200, 'Good', 'Ajmer, Rajasthan', 'photo-1529139574466-a303027c1d8b'),
+  listing('Fashion', 'Lucknowi chikankari kurta', 'Mela mein pehna tha, ab size chhota ho gaya. Safed rang hai, kapda halka hai aur silai theek hai.', 950, 'Good', 'Lucknow, Uttar Pradesh', 'photo-1598033129183-c4f50c736f10'),
+  listing('Fashion', 'Kolhapuri chappal, size 7', 'Do baar pehni hai, mere pair mein fit nahi aayi. Neeche ka sole bilkul naya jaisa hai.', 700, 'Like new', 'Kolhapur, Maharashtra', 'photo-1543163521-1bf539c55dd2'),
+  listing('Fashion', 'Sooti saari blouse ke saath', 'Mummy ne ek function mein pehni thi. Saari aur matching blouse dono hain, dhuli hui hai.', 1600, 'Excellent', 'Mysuru, Karnataka', 'photo-1583391733956-6c78276477e3'),
+
+  listing('Home & Living', 'Peetal ki pooja ki thaali', 'Ghar mein roz pooja ke liye rakhi thi, ab doosri le aaye. Thodi purani lagti hai par bilkul kaam ki hai.', 650, 'Good', 'Nashik, Maharashtra', 'photo-1603006905003-be475563bc59'),
+  listing('Home & Living', 'Mitti ki chai wali kulhad', 'Das kulhad hain, ek chhote se mela se laaye the. Mehmaan aayein toh kaam aate hain.', 450, 'Good', 'Varanasi, Uttar Pradesh', 'photo-1495474472287-4d71bcdd2085'),
+  listing('Home & Living', 'Haath se buna dari', 'Drawing room mein bichhi thi, pichhle hafte dhulwaayi hai. Kona thoda ghisa hai, baaki saaf hai.', 1100, 'Good', 'Bikaner, Rajasthan', 'photo-1616486338812-3dadae4b4ace'),
+  listing('Home & Living', 'Rangoli ke peetal wale diye', 'Pichhli Diwali par jalaye the, paanch diye hain. Saaf karoge toh aur chamak jaayenge.', 800, 'Fair', 'Ujjain, Madhya Pradesh', 'photo-1603006905003-be475563bc59'),
+
+  listing('Sports', 'Desi kushti ke mitti wale gadda', 'Akhade se liya tha, ghar par workout ke kaam aata hai. Kaafi bhaari hai, aakar le jaana hoga.', 2400, 'Good', 'Rohtak, Haryana', 'photo-1583454110551-21f2fa2afe61'),
+  listing('Sports', 'Cricket ka bat aur ball', 'Gali cricket ke liye liya tha, ab khelna kam ho gaya. Bat par naam likha hai, baaki sab sahi hai.', 1200, 'Good', 'Delhi, Delhi', 'photo-1531415074968-036ba1b575da'),
+  listing('Sports', 'Purani mazboot cycle', 'School aane jaane ke kaam aati thi. Brake aur bell theek hain, chain mein thoda tel daalna padega.', 3800, 'Fair', 'Jalandhar, Punjab', 'photo-1485965120184-e220f721d03e'),
+  listing('Sports', 'Kabaddi ke liye ghutne ke pad', 'Do match mein pehne the, phir team chhod di. Dhule hue hain aur velcro theek se pakadta hai.', 500, 'Good', 'Patiala, Punjab', 'photo-1517836357463-d25dfeac3438'),
+
+  listing('Books', 'Premchand ki kahaniyon ka set', 'Aath chhoti kitaabein hain, sab padh li. Cover thode mud gaye hain par panne saaf hain.', 600, 'Good', 'Gorakhpur, Uttar Pradesh', 'photo-1512820790803-83ca734da794'),
+  listing('Books', 'Hindi vyaakaran ki kitaab', 'Board exam ke liye li thi, ab kaam nahi aati. Andar pencil se do chhote nishaan hain.', 280, 'Good', 'Kota, Rajasthan', 'photo-1495446815901-a7297e633e8d'),
+  listing('Books', 'Panchatantra ki tasveer wali kitaab', 'Bhanji ko kahaaniyaan sunaane ke liye li thi. Tasveerein rangin hain aur saare panne hain.', 350, 'Excellent', 'Bhopal, Madhya Pradesh', 'photo-1519682337058-a94d519337bc'),
+  listing('Books', 'Rail yatra ke liye Hindi upanyaas', 'Safar mein padhne ko liya tha, ek hi baar padha. Kitaab saaf hai, kisi panne par kuch likha nahi.', 320, 'Good', 'Ajmer, Rajasthan', 'photo-1544947950-fa07a98d237f'),
+
+  listing('Other', 'Haath se bani mitti ki surahi', 'Garmi mein paani thanda rakhne ke liye use ki. Is saal fridge aa gaya, surahi mein koi daraar nahi.', 500, 'Good', 'Jaisalmer, Rajasthan', 'photo-1578500494198-246f612d3b3d'),
+  listing('Other', 'Chhota dholak', 'Ghar ke bhajan mein bajta tha, ab kaafi time se nahi nikla. Saath mein kapde ka cover bhi hai.', 1800, 'Good', 'Mathura, Uttar Pradesh', 'photo-1510915361894-db8b60106cb1'),
+  listing('Other', 'Aam ka achar rakhne ka martbaan', 'Teen mitti ke martbaan hain, khaali aur saaf hain. Achar ya papad rakhne mein kaam aayenge.', 750, 'Excellent', 'Bharatpur, Rajasthan', 'photo-1578500494198-246f612d3b3d'),
+  listing('Other', 'Patang aur manjhe ka dabba', 'Makar Sankranti ke liye liya tha, chaar patang bachi hain. Dabba aur dor dono de raha hoon.', 400, 'Good', 'Ahmedabad, Gujarat', 'photo-1490312278390-ab64016e0aa9'),
 ]

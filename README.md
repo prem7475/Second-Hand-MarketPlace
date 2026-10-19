@@ -32,7 +32,8 @@ Use `npm run dev` when running MongoDB locally. Docker Compose starts MongoDB,
 the API, and the Nginx client together at <http://localhost:8080>.
 Compose configures the API to trust its single Nginx proxy so authentication
 rate limiting can correctly identify client IPs. It also seeds the demo
-catalog automatically when the API starts.
+catalog automatically when the API starts. The Explore page shows up to 24
+listings at a time and paginates the full catalog.
 
 To add sample listings to a local database, run:
 
@@ -41,7 +42,7 @@ $env:SEED_DEMO_DATA = "true"
 npm run seed -w server
 ```
 
-The seed command adds 56 listings (8 in each marketplace category). Each listing
+The seed command adds 84 listings (12 in each marketplace category). Each listing
 includes a description, price, condition, location, and Unsplash image. Seeding
 is idempotent. It creates an unloginable fixture seller and does not set a
 default user password. Docker Compose seeds automatically. The Render Blueprint
@@ -171,7 +172,7 @@ well, run `docker compose down --volumes`; this permanently removes the
    (at least 32 random characters); never reuse or upload the local `.env`
    secret. The Blueprint enables idempotent demo seeding with
    `SEED_DEMO_DATA=true` and `ALLOW_DEMO_SEED=true`; after the first successful
-   API startup, verify there are 8 listings in each of the 7 categories.
+   API startup, verify there are 12 listings in each of the 7 categories.
 4. In Netlify, choose **Add new site → Import an existing project** and connect
    the repository. Keep the base directory at the repository root. The checked-in
    `netlify.toml` configures the build command and `client/dist` publish folder.

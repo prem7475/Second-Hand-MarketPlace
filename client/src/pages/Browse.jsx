@@ -21,7 +21,9 @@ const conditions = ['Like new', 'Excellent', 'Good', 'Fair']
 export default function Browse() {
   const { user } = useAuth()
   const [searchParams, setSearchParams] = useSearchParams()
-  const { items, pagination, loading, error, demoMode } = useListings(searchParams)
+  const listingParams = new URLSearchParams(searchParams)
+  if (!listingParams.has('limit')) listingParams.set('limit', '24')
+  const { items, pagination, loading, error, demoMode } = useListings(listingParams)
   const [saved, setSaved] = useState(new Set())
   const [query, setQuery] = useState(searchParams.get('q') || '')
 

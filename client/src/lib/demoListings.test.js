@@ -12,13 +12,20 @@ const categories = [
   'Other',
 ]
 
-test('provides eight image-backed demo listings for every category', () => {
+test('provides twelve image-backed demo listings for every category', () => {
   for (const category of categories) {
     const result = getDemoListings(new URLSearchParams(`category=${encodeURIComponent(category)}`))
-    assert.equal(result.items.length, 8, `${category} should show eight items`)
-    assert.equal(result.pagination.total, 8)
+    assert.equal(result.items.length, 12, `${category} should show twelve items`)
+    assert.equal(result.pagination.total, 12)
     assert.ok(result.items.every((item) => item.isDemo && item.images.length > 0))
   }
+})
+
+test('explore feed shows 24 demo listings per page', () => {
+  const result = getDemoListings(new URLSearchParams('limit=24&sort=newest'))
+  assert.equal(result.items.length, 24)
+  assert.equal(result.pagination.total, 84)
+  assert.equal(result.pagination.pages, 4)
 })
 
 test('demo catalog supports search and resolves item details', () => {

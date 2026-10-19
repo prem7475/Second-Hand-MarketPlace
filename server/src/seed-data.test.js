@@ -13,13 +13,13 @@ const categories = [
   'Other',
 ]
 
-test('demo catalog contains eight complete, valid listings in every category', () => {
-  assert.equal(examples.length, 56)
+test('demo catalog contains twelve complete, valid listings in every category', () => {
+  assert.equal(examples.length, 84)
   assert.equal(new Set(examples.map((item) => item.title)).size, examples.length)
 
   for (const category of categories) {
     const categoryListings = examples.filter((item) => item.category === category)
-    assert.equal(categoryListings.length, 8, `${category} should have eight demo listings`)
+    assert.equal(categoryListings.length, 12, `${category} should have twelve demo listings`)
     for (const item of categoryListings) {
       assert.equal(validate(listingSchema, item).success, true, item.title)
       assert.ok(item.images.length > 0, `${item.title} should have an image`)
@@ -34,6 +34,7 @@ test('demo catalog contains eight complete, valid listings in every category', (
 test('demo listings use romanized Hindi titles, Indian locations, and rupee-scale prices', () => {
   const IndianRegions = [
     'Assam',
+    'Bihar',
     'Chandigarh',
     'Delhi',
     'Goa',
