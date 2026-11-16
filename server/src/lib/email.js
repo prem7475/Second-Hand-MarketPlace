@@ -5,7 +5,8 @@ let transport
 let missingConfigurationReported = false
 
 function getTransport() {
-  const { SMTP_HOST: host, SMTP_USER: user, SMTP_PASS: pass } = process.env
+  const { SMTP_HOST: host, SMTP_USER: user } = process.env
+  const pass = process.env.SMTP_PASS?.replace(/\s+/g, '')
   if (!host || !user || !pass) {
     if (!missingConfigurationReported) {
       console.warn(
