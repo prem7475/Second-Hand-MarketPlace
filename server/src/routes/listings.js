@@ -4,6 +4,7 @@ import { Listing } from '../models/Listing.js'
 import { Favorite } from '../models/Favorite.js'
 import { authenticate } from '../middleware/auth.js'
 import { asyncHandler, HttpError } from '../lib/errors.js'
+import { notifyUser } from '../lib/notifications.js'
 import { listingQuerySchema, listingSchema, validate } from '../lib/validation.js'
 
 const router = Router()
@@ -90,6 +91,11 @@ router.post(
         .json({ message: 'Please check the listing fields.', errors: parsed.errors })
     const item = await Listing.create({ ...parsed.data, seller: req.user.id })
     await item.populate('seller', 'name location')
+    notifyUser(req.app.get('io'), req.user.id, {
+      title: 'Listing published',
+      message: `${item.title} is now live.`,
+      href: `/listing/${item.id}`,
+    })
     res.status(201).json({ item })
   }),
 )
@@ -112,6 +118,11 @@ router.patch(
     Object.assign(item, parsed.data)
     await item.save()
     await item.populate('seller', 'name location')
+    notifyUser(req.app.get('io'), req.user.id, {
+      title: item.status === 'sold' ? 'Listing marked sold' : 'Listing updated',
+      message: `${item.title} has been updated.`,
+      href: `/listing/${item.id}`,
+    })
     res.json({ item })
   }),
 )
@@ -127,6 +138,11 @@ router.delete(
       throw new HttpError(403, 'You can only remove your own listings.')
     }
     await Promise.all([item.deleteOne(), Favorite.deleteMany({ listing: item.id })])
+    notifyUser(req.app.get('io'), req.user.id, {
+      title: 'Listing removed',
+      message: `${item.title} was removed from the marketplace.`,
+      href: '/profile',
+    })
     res.json({ message: 'Listing removed.' })
   }),
 )

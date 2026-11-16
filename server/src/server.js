@@ -54,6 +54,7 @@ io.use(async (socket, next) => {
 })
 
 io.on('connection', (socket) => {
+  socket.join(`user:${socket.data.user.id}`)
   let lastMessageAt = 0
 
   socket.on('conversation:join', async (conversationId, acknowledge = () => {}) => {
@@ -90,6 +91,7 @@ io.on('connection', (socket) => {
         conversationId,
         socket.data.user,
         parsed.data.body,
+        io,
       )
       lastMessageAt = now
       io.to(conversation.id).emit('message:new', message)

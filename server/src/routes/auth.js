@@ -6,6 +6,7 @@ import { User } from '../models/User.js'
 import { authenticate } from '../middleware/auth.js'
 import { config } from '../config.js'
 import { asyncHandler, HttpError } from '../lib/errors.js'
+import { notifyUser } from '../lib/notifications.js'
 import { loginSchema, registerSchema, validate } from '../lib/validation.js'
 
 const router = Router()
@@ -117,6 +118,11 @@ router.patch(
     req.user.name = name
     req.user.location = location
     await req.user.save()
+    notifyUser(req.app.get('io'), req.user.id, {
+      title: 'Profile updated',
+      message: 'Your account details are up to date.',
+      href: '/profile',
+    })
     res.json({ user: req.user })
   }),
 )

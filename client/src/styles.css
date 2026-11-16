@@ -1047,6 +1047,66 @@ em {
 .notice a {
   text-decoration: underline;
 }
+.notification-stack {
+  position: fixed;
+  z-index: 40;
+  top: 94px;
+  right: max(20px, calc((100vw - 1180px) / 2));
+  display: grid;
+  width: min(360px, calc(100vw - 32px));
+  gap: 9px;
+}
+.notification-toast {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px;
+  border: 1px solid #d5e1d0;
+  border-radius: 5px;
+  color: #3c5140;
+  background: #fbfcf8;
+  box-shadow: 0 8px 26px rgba(41, 55, 47, 0.13);
+  animation: notification-enter 180ms ease-out;
+}
+.notification-copy {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+.notification-copy strong {
+  font-size: 12px;
+}
+.notification-copy span {
+  color: #727b70;
+  font-size: 11px;
+  line-height: 1.5;
+}
+.notification-dismiss {
+  display: grid;
+  flex: 0 0 auto;
+  place-items: center;
+  width: 25px;
+  height: 25px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  color: #737d72;
+  background: transparent;
+}
+.notification-dismiss:hover {
+  background: #edf1e9;
+}
+@keyframes notification-enter {
+  from {
+    transform: translateY(-5px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
 .empty-state {
   display: flex;
   min-height: 245px;

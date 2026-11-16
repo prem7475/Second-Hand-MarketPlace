@@ -78,7 +78,11 @@ class ApiSession {
       method: 'POST',
       body: {},
     })
-    assert.equal(result.status, 200, `Socket token request failed: ${JSON.stringify(result.payload)}`)
+    assert.equal(
+      result.status,
+      200,
+      `Socket token request failed: ${JSON.stringify(result.payload)}`,
+    )
     assert.ok(result.payload.token, 'Authenticated socket token should be returned')
     return result.payload.token
   }
@@ -112,10 +116,23 @@ function connectSocket({ token, sessionCookie } = {}) {
 
 function joinConversation(socket, conversationId) {
   return new Promise((resolve, reject) => {
-    const timeout = setTimeout(() => reject(new Error('Conversation join acknowledgement timed out.')), 5000)
+    const timeout = setTimeout(
+      () => reject(new Error('Conversation join acknowledgement timed out.')),
+      5000,
+    )
     socket.emit('conversation:join', conversationId, (result) => {
       clearTimeout(timeout)
       resolve(result)
+    })
+  })
+}
+
+function waitForEvent(socket, eventName) {
+  return new Promise((resolve, reject) => {
+    const timeout = setTimeout(() => reject(new Error(`No ${eventName} event arrived.`)), 5000)
+    socket.once(eventName, (payload) => {
+      clearTimeout(timeout)
+      resolve(payload)
     })
   })
 }
@@ -155,6 +172,8 @@ async function run() {
     const buyerSocketToken = await buyerSession.socketToken()
     const outsiderSocketToken = await outsiderSession.socketToken()
 
+    const sellerSocket = await connectSocket({ token: sellerSocketToken })
+    const listingNotification = waitForEvent(sellerSocket, 'notification:new')
     const created = await sellerSession.request('/api/listings', {
       method: 'POST',
       body: {
@@ -168,13 +187,22 @@ async function run() {
       },
     })
     assert.equal(created.status, 201, `Listing creation failed: ${JSON.stringify(created.payload)}`)
+    assert.equal((await listingNotification).title, 'Listing published')
+    console.log('PASS successful listing creation sends a private notification')
     const listingId = created.payload.item._id
 
+    const conversationNotification = waitForEvent(sellerSocket, 'notification:new')
     const started = await buyerSession.request('/api/conversations', {
       method: 'POST',
       body: { listingId },
     })
-    assert.equal(started.status, 200, `Conversation creation failed: ${JSON.stringify(started.payload)}`)
+    assert.equal(
+      started.status,
+      200,
+      `Conversation creation failed: ${JSON.stringify(started.payload)}`,
+    )
+    assert.equal((await conversationNotification).title, 'New conversation')
+    console.log('PASS new conversations notify the listing seller')
     const conversationId = started.payload.conversation._id
 
     await assert.rejects(connectSocket(), /Authentication required/)
@@ -192,7 +220,6 @@ async function run() {
     legacyCookieSocket.disconnect()
     console.log('PASS existing cookie-authenticated WebSocket clients remain supported')
 
-    const sellerSocket = await connectSocket({ token: sellerSocketToken })
     const buyerSocket = await connectSocket({ token: buyerSocketToken })
     assert.equal((await joinConversation(sellerSocket, conversationId)).ok, true)
     assert.equal((await joinConversation(buyerSocket, conversationId)).ok, true)
@@ -200,6 +227,24 @@ async function run() {
     assert.equal(buyerSocket.io.engine.transport.name, 'websocket')
     console.log('PASS authorized participants connect over WebSocket and join their room')
 
+    const buyerFavoriteNotification = waitForEvent(buyerSocket, 'notification:new')
+    const sellerFavoriteNotification = waitForEvent(sellerSocket, 'notification:new')
+    const saved = await buyerSession.request(`/api/favorites/${listingId}`, { method: 'POST' })
+    assert.equal(saved.status, 201, `Saving favorite failed: ${JSON.stringify(saved.payload)}`)
+    assert.equal((await buyerFavoriteNotification).title, 'Saved to favorites')
+    assert.equal((await sellerFavoriteNotification).title, 'New favorite')
+    const removeFavoriteNotification = waitForEvent(buyerSocket, 'notification:new')
+    const removed = await buyerSession.request(`/api/favorites/${listingId}`, { method: 'DELETE' })
+    assert.equal(
+      removed.status,
+      200,
+      `Removing favorite failed: ${JSON.stringify(removed.payload)}`,
+    )
+    assert.equal((await removeFavoriteNotification).title, 'Removed from favorites')
+    console.log('PASS adding and removing favorites sends user notifications')
+
+    const buyerMessageNotification = waitForEvent(buyerSocket, 'notification:new')
+    const sellerMessageNotification = waitForEvent(sellerSocket, 'notification:new')
     const incomingMessage = new Promise((resolve, reject) => {
       const timeout = setTimeout(() => reject(new Error('No message:new event arrived.')), 5000)
       sellerSocket.once('message:new', (message) => {
@@ -208,7 +253,10 @@ async function run() {
       })
     })
     const acknowledgement = await new Promise((resolve, reject) => {
-      const timeout = setTimeout(() => reject(new Error('Message acknowledgement timed out.')), 5000)
+      const timeout = setTimeout(
+        () => reject(new Error('Message acknowledgement timed out.')),
+        5000,
+      )
       buyerSocket.emit(
         'message:send',
         { conversationId, body: 'Is this item still available?' },
@@ -222,7 +270,9 @@ async function run() {
     const delivered = await incomingMessage
     assert.equal(delivered._id, acknowledgement.message._id)
     assert.equal(delivered.body, 'Is this item still available?')
-    console.log('PASS sent messages are acknowledged and delivered to room participants')
+    assert.equal((await buyerMessageNotification).title, 'Message sent')
+    assert.equal((await sellerMessageNotification).title, 'New message')
+    console.log('PASS sent messages and notifications reach both conversation participants')
 
     const history = await buyerSession.request(`/api/conversations/${conversationId}/messages`)
     assert.equal(history.status, 200)

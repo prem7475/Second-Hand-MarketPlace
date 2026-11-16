@@ -5,6 +5,7 @@ import { Listing } from '../models/Listing.js'
 import { Message } from '../models/Message.js'
 import { authenticate } from '../middleware/auth.js'
 import { asyncHandler, HttpError } from '../lib/errors.js'
+import { notifyUser } from '../lib/notifications.js'
 import { messageSchema, validate } from '../lib/validation.js'
 
 const router = Router()
@@ -14,7 +15,7 @@ function validId(value) {
   if (!mongoose.isValidObjectId(value)) throw new HttpError(400, 'The requested id is not valid.')
 }
 
-async function createMessage(conversationId, user, body) {
+async function createMessage(conversationId, user, body, io) {
   const conversation = await Conversation.findOne({ _id: conversationId, members: user.id })
   if (!conversation) throw new HttpError(404, 'This conversation could not be found.')
   const message = await Message.create({ conversation: conversation.id, sender: user.id, body })
@@ -22,6 +23,20 @@ async function createMessage(conversationId, user, body) {
   conversation.lastMessageAt = message.createdAt
   await conversation.save()
   await message.populate('sender', 'name')
+  notifyUser(io, user.id, {
+    title: 'Message sent',
+    message: 'Your message was sent.',
+    href: `/inbox/${conversation.id}`,
+  })
+  conversation.members
+    .filter((member) => member.toString() !== user.id)
+    .forEach((member) =>
+      notifyUser(io, member, {
+        title: 'New message',
+        message: `${user.name} sent you a message.`,
+        href: `/inbox/${conversation.id}`,
+      }),
+    )
   return { conversation, message }
 }
 
@@ -48,13 +63,26 @@ router.post(
       throw new HttpError(400, 'You cannot start a conversation with yourself.')
     const members = [req.user.id, listing.seller.id].sort()
     const participantsKey = members.join(':')
-    const conversation = await Conversation.findOneAndUpdate(
+    const result = await Conversation.findOneAndUpdate(
       { listing: listing.id, participantsKey },
       { $setOnInsert: { listing: listing.id, members, participantsKey } },
-      { new: true, upsert: true, setDefaultsOnInsert: true },
+      { new: true, upsert: true, setDefaultsOnInsert: true, includeResultMetadata: true },
     )
-      .populate('members', 'name location')
-      .populate('listing', 'title images price status')
+    const conversation = result.value
+    await conversation.populate('members', 'name location')
+    await conversation.populate('listing', 'title images price status')
+    notifyUser(req.app.get('io'), req.user.id, {
+      title: 'Conversation ready',
+      message: `You can now message the seller about ${listing.title}.`,
+      href: `/inbox/${conversation.id}`,
+    })
+    if (!result.lastErrorObject.updatedExisting) {
+      notifyUser(req.app.get('io'), listing.seller.id, {
+        title: 'New conversation',
+        message: `${req.user.name} is interested in ${listing.title}.`,
+        href: `/inbox/${conversation.id}`,
+      })
+    }
     res.status(200).json({ conversation })
   }),
 )
@@ -86,8 +114,14 @@ router.post(
         message: 'Please enter a message of up to 2,000 characters.',
         errors: parsed.errors,
       })
-    const { conversation, message } = await createMessage(req.params.id, req.user, parsed.data.body)
-    req.app.get('io').to(conversation.id).emit('message:new', message)
+    const io = req.app.get('io')
+    const { conversation, message } = await createMessage(
+      req.params.id,
+      req.user,
+      parsed.data.body,
+      io,
+    )
+    io?.to(conversation.id).emit('message:new', message)
     res.status(201).json({ message })
   }),
 )

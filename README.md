@@ -107,6 +107,19 @@ conversation id and `message:send` with
 authorized room members as `message:new`. Conversation membership and payload
 validation are checked on the server.
 
+Signed-in clients also receive `notification:new` events in their private
+user room. Successful listing, favorite, profile, conversation, and message
+actions trigger in-app notifications; other participants are notified about
+new favorites, conversations, and messages.
+
+The same transaction notification handler sends an email to each notification
+recipient when SMTP is configured. Set `SMTP_HOST`, `SMTP_PORT`, `SMTP_SECURE`,
+`SMTP_USER`, `SMTP_PASS`, and optionally `SMTP_FROM` and `CLIENT_URL` in
+`server/.env` (and in the hosting provider's environment settings). For Gmail,
+use an app password rather than your account password. Email addresses are read
+from the recipient's account; credentials and sender settings stay on the
+server. Without SMTP settings, in-app WebSocket notifications still work.
+
 ## Quality checks
 
 ```powershell
@@ -137,10 +150,10 @@ npm run test:websocket
 ```
 
 The smoke test uses temporary local-only test accounts and removes their users,
-listing, conversation, and messages when finished. It verifies rejected
-unauthenticated sockets, short-lived socket authentication, WebSocket transport,
-conversation membership, message delivery, and REST history persistence. Set
-`TEST_API_URL` if the local app is not at
+listing, conversation, favorites, and messages when finished. It verifies
+rejected unauthenticated sockets, short-lived socket authentication, WebSocket
+transport, conversation membership, listing/favorite/message notifications,
+message delivery, and REST history persistence. Set `TEST_API_URL` if the local app is not at
 `http://localhost:8080`. The Compose MongoDB port is bound to loopback so the
 test can clean its temporary data. Compose exposes MongoDB on `127.0.0.1:27018`
 to avoid conflicting with a MongoDB server already using the default port.
